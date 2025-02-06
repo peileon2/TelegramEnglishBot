@@ -2,6 +2,8 @@ from zhipuai import ZhipuAI
 import os
 
 ZHIPU_TOKEN = os.getenv("ZHIPU_TOKEN")
+if not ZHIPU_TOKEN:
+    raise ValueError("ZHIPU_TOKEN 环境变量未设置！")
 
 
 class ZhipuWord:
