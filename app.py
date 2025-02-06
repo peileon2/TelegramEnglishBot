@@ -3,6 +3,7 @@ import os
 import httpx
 import uvicorn
 from dotenv import load_dotenv
+from telegramenglishteacher.zhipuWord import zhipuWord
 
 app = FastAPI()
 
@@ -40,7 +41,7 @@ async def telegram_webhook(request: Request):
 
 # 处理文本消息
 async def handle_text_message(chat_id, text):
-    reply_text = f"你说的是：{text}"
+    reply_text = zhipuWord.generate_text(text)
     await send_message(chat_id, reply_text)
     return {"ok": True}
 
@@ -60,7 +61,7 @@ async def handle_document_message(chat_id):
 # 发送 Telegram 消息（异步）
 async def send_message(chat_id, text):
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text}
+    payload = {"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}
 
     async with httpx.AsyncClient() as client:
         try:
