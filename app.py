@@ -17,7 +17,8 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 async def telegram_webhook(request: Request):
     # 获取请求头中的 Token
     secret_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-
+    print(secret_token)
+    print(SECRET_WEBHOOK_TOKEN)
     # 验证 Token
     if secret_token != SECRET_WEBHOOK_TOKEN:
         raise HTTPException(status_code=403, detail="Forbidden: Invalid secret token")

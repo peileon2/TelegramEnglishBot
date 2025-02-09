@@ -10,11 +10,17 @@ RUN pip install --no-cache-dir poetry
 # 复制整个项目文件夹
 COPY . /app/
 
+# 复制 .env 文件到容器
+COPY .env /app/.env
+
 # 使用 Poetry 安装依赖
 RUN poetry config virtualenvs.create false && poetry install --no-root --no-interaction --no-ansi
+
+# 设置默认端口
 ENV PORT=8080
+
 # 暴露端口
 EXPOSE 8080
 
 # 使用 bash 来启动 FastAPI 应用，确保环境变量可以被解析
-CMD ["sh", "-c", "poetry run uvicorn app:app --host 0.0.0.0 --port $PORT"]
+CMD ["sh", "-c", "export $(grep -v '^#' /app/.env | xargs) && poetry run uvicorn app:app --host 0.0.0.0 --port $PORT"]
