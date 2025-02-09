@@ -17,12 +17,11 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 async def telegram_webhook(request: Request):
     # 获取请求头中的 Token
     secret_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-
+    print(f"secret_token: {repr(secret_token)}")
+    print(f"SECRET_WEBHOOK_TOKEN: {repr(SECRET_WEBHOOK_TOKEN)}")
     # 验证 Token
     if secret_token != SECRET_WEBHOOK_TOKEN:
         # 调试信息：打印 `repr()` 来检查实际字符
-        print(f"secret_token: {repr(secret_token)}")
-        print(f"SECRET_WEBHOOK_TOKEN: {repr(SECRET_WEBHOOK_TOKEN)}")
         raise HTTPException(status_code=403, detail="Forbidden: Invalid secret token")
 
     # 解析 JSON 数据
