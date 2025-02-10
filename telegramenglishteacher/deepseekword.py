@@ -53,3 +53,4 @@ class DeepSeekWord:
 
 # 使用示例
 deepseek_word = DeepSeekWord()
+# deepseek_word.generate_text("I is a student.")

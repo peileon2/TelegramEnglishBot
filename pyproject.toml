@@ -13,6 +13,7 @@ uvicorn = "^0.34.0"
 httpx = "^0.28.1"
 python-dotenv = "^1.0.1"
 zhipuai = "^2.1.5.20250106"
+openai = "^1.61.1"
 
 
 [build-system]

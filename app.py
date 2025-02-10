@@ -3,7 +3,9 @@ import os
 import httpx
 import uvicorn
 from dotenv import load_dotenv
-from telegramenglishteacher.zhipuWord import zhipuWord
+
+# from telegramenglishteacher.zhipuWord import zhipuWord
+from telegramenglishteacher.deepseekword import deepseek_word
 
 app = FastAPI()
 
@@ -17,8 +19,8 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 async def telegram_webhook(request: Request):
     # 获取请求头中的 Token
     secret_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-    print(f"secret_token: {repr(secret_token)}")
-    print(f"SECRET_WEBHOOK_TOKEN: {repr(SECRET_WEBHOOK_TOKEN)}")
+    # print(f"secret_token: {repr(secret_token)}")
+    # print(f"SECRET_WEBHOOK_TOKEN: {repr(SECRET_WEBHOOK_TOKEN)}")
     # 验证 Token
     if secret_token != SECRET_WEBHOOK_TOKEN:
         # 调试信息：打印 `repr()` 来检查实际字符
@@ -43,7 +45,7 @@ async def telegram_webhook(request: Request):
 
 # 处理文本消息
 async def handle_text_message(chat_id, text):
-    reply_text = zhipuWord.generate_text(text)
+    reply_text = deepseek_word.generate_text(text)
     await send_message(chat_id, reply_text)
     return {"ok": True}
 
