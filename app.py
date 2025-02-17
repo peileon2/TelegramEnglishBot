@@ -4,8 +4,9 @@ import httpx
 import uvicorn
 from dotenv import load_dotenv
 
-# from telegramenglishteacher.zhipuWord import zhipuWord
-from telegramenglishteacher.deepseekword import deepseek_word
+from telegramenglishteacher.Talkfirst import qwen_plus_word
+
+# from telegramenglishteacher.deepseekword import deepseek_word
 
 app = FastAPI()
 
@@ -19,9 +20,6 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 async def telegram_webhook(request: Request):
     # 获取请求头中的 Token
     secret_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-    # print(f"secret_token: {repr(secret_token)}")
-    # print(f"SECRET_WEBHOOK_TOKEN: {repr(SECRET_WEBHOOK_TOKEN)}")
-    # 验证 Token
     if secret_token != SECRET_WEBHOOK_TOKEN:
         # 调试信息：打印 `repr()` 来检查实际字符
         raise HTTPException(status_code=403, detail="Forbidden: Invalid secret token")
@@ -45,21 +43,18 @@ async def telegram_webhook(request: Request):
 
 # 处理文本消息
 async def handle_text_message(chat_id, text):
-    reply_text = deepseek_word.generate_text(text)
+    reply_text = qwen_plus_word.generate_text(text)
     await send_message(chat_id, reply_text)
-    return {"ok": True}
 
 
 # 处理图片消息
 async def handle_photo_message(chat_id):
     await send_message(chat_id, "收到图片，但我暂时无法处理 🖼️")
-    return {"ok": True}
 
 
 # 处理文档消息
 async def handle_document_message(chat_id):
     await send_message(chat_id, "收到文件，感谢你的上传 📄")
-    return {"ok": True}
 
 
 # 发送 Telegram 消息（异步）
