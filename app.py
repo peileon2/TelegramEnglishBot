@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
 import os
 import httpx
 import uvicorn
@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from telegramenglishteacher.Talkfirst import qwen_plus_word
 
-# from telegramenglishteacher.deepseekword import deepseek_word
+from telegramenglishteacher.deepseekword import deepseek_word
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 
 @app.post("/webhook")
-async def telegram_webhook(request: Request):
+async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
     # 获取请求头中的 Token
     secret_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
     if secret_token != SECRET_WEBHOOK_TOKEN:
@@ -32,7 +32,7 @@ async def telegram_webhook(request: Request):
         chat_id = message["chat"]["id"]
 
         if "text" in message:
-            return await handle_text_message(chat_id, message["text"])
+            return await handle_text_message(chat_id, message["text"], background_tasks)
         elif "photo" in message:
             return await handle_photo_message(chat_id)
         elif "document" in message:
@@ -42,8 +42,9 @@ async def telegram_webhook(request: Request):
 
 
 # 处理文本消息
-async def handle_text_message(chat_id, text):
+async def handle_text_message(chat_id, text, background_tasks: BackgroundTasks):
     reply_text = qwen_plus_word.generate_text(text)
+    background_tasks.add_task(deepseek_word.generate_analy_content, text)
     await send_message(chat_id, reply_text)
 
 
@@ -55,6 +56,10 @@ async def handle_photo_message(chat_id):
 # 处理文档消息
 async def handle_document_message(chat_id):
     await send_message(chat_id, "收到文件，感谢你的上传 📄")
+
+
+async def handle_markdown_text(chat_id):
+    pass
 
 
 # 发送 Telegram 消息（异步）
