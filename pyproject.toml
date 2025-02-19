@@ -14,6 +14,7 @@ httpx = "^0.28.1"
 python-dotenv = "^1.0.1"
 zhipuai = "^2.1.5.20250106"
 openai = "^1.61.1"
+sqlalchemy = "^2.0.38"
 
 
 [build-system]

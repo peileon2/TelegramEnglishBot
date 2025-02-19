@@ -14,32 +14,48 @@ class DeepSeekWord:
         )
         self.model = model  # 设置默认的模型名称
 
-    def generate_text(self, content):
+    def generate_analy_content(self, content):
         messages = [
             {
                 "role": "system",
-                "content": """你是一个专业的英语写作和口语分析助手，能够帮助用户检查和改正英语句子。
-
-        1 **检查语法和用词错误**：
-        - 逐项列出错误部分，并简要说明错误类型（如时态错误、主谓不一致、搭配错误等）。
-
-        2 **提供正确的书面改写**：
-        - 句子应符合正式英语语法，适用于书面表达。
-
-        3 **转换为自然的口语表达**：
-        - 让句子更加符合日常对话的表达方式。
-
-        4 **分析口语句子的词伙**：
-        - 逐项列出关键短语
-        """,
+                "content": "You are an AI assistant that strictly follows instructions and always returns valid JSON output. Your task is to convert written English into natural spoken English while providing key phrase improvements."
             },
-            {"role": "user", "content": content},
+            {
+                "role": "user",
+                "content": (
+                    "Convert the following English sentence into a **more natural spoken form** and return the result **strictly** in JSON format with this structure:\n\n"
+                    "{\n"
+                    '  "spoken_version": "Fully revised, more natural spoken version of the sentence.",\n'
+                    '  "phrases": [\n'
+                    "    {\n"
+                    '      "original": "Original phrase from the input sentence.",\n'
+                    '      "revised": "Improved, more natural spoken version."\n'
+                    "    }\n"
+                    "    // Add more entries as needed, if no change is needed, mark as 'unchanged'.\n"
+                    "  ]\n"
+                    "}\n\n"
+                    "**Rules:**\n"
+                    "- **Always return valid, properly formatted JSON.**\n"
+                    "- **Make the sentence sound as natural as possible in spoken English.**\n"
+                    "- **DO NOT simply replace words—adjust the phrasing to be natural.**\n"
+                    "- **Keep 'phrases' meaningful—don't force changes if unnecessary.**\n"
+                    "- **If a phrase is already natural, mark it as 'unchanged'.**\n"
+                    "- **DO NOT change the meaning of the sentence.**\n\n"
+                    f"Sentence: \"{content}\""
+                )
+            }
         ]
+
+
+
 
         # 获取 DeepSeek 的回复
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
+            response_format={
+            'type': 'json_object'
+        }
         )
 
         # 打印并返回模型的回复
@@ -49,4 +65,4 @@ class DeepSeekWord:
 
 # 使用示例
 deepseek_word = DeepSeekWord()
-deepseek_word.generate_text("I is a student.")
+deepseek_word.generate_analy_content("But extra difficult fish with crown keeps appearing")
