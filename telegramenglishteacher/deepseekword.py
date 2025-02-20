@@ -18,7 +18,7 @@ class DeepSeekWord:
         messages = [
             {
                 "role": "system",
-                "content": "You are an AI assistant that strictly follows instructions and always returns valid JSON output. Your task is to convert written English into natural spoken English while providing key phrase improvements."
+                "content": "You are an AI assistant that strictly follows instructions and always returns valid JSON output. Your task is to convert written English into natural spoken English while providing key phrase improvements.",
             },
             {
                 "role": "user",
@@ -41,21 +41,14 @@ class DeepSeekWord:
                     "- **Keep 'phrases' meaningful—don't force changes if unnecessary.**\n"
                     "- **If a phrase is already natural, mark it as 'unchanged'.**\n"
                     "- **DO NOT change the meaning of the sentence.**\n\n"
-                    f"Sentence: \"{content}\""
-                )
-            }
+                    f'Sentence: "{content}"'
+                ),
+            },
         ]
-
-
-
 
         # 获取 DeepSeek 的回复
         response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            response_format={
-            'type': 'json_object'
-        }
+            model=self.model, messages=messages, response_format={"type": "json_object"}
         )
 
         # 打印并返回模型的回复
@@ -65,4 +58,4 @@ class DeepSeekWord:
 
 # 使用示例
 deepseek_word = DeepSeekWord()
-deepseek_word.generate_analy_content("But extra difficult fish with crown keeps appearing")
+# deepseek_word.generate_analy_content("But extra difficult fish with crown keeps appearing")

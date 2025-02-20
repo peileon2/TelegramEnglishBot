@@ -27,10 +27,8 @@ async def telegram_webhook(request: Request, background_tasks: BackgroundTasks):
         chat_id = message["chat"]["id"]
 
         if "text" in message:
-            reply_txt = await bot.handle_text_message(
-                chat_id, message["text"], background_tasks
-            )
-            background_tasks.add_task(bot.send_markdown, reply_txt)
+            reply_txt = await bot.handle_text_message(chat_id, message["text"])
+            background_tasks.add_task(bot.send_markdown, chat_id, reply_txt)
         elif "photo" in message:
             return await bot.handle_photo_message(chat_id)
         elif "document" in message:

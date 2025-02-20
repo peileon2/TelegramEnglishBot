@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Request, HTTPException, BackgroundTasks
+from fastapi import FastAPI, BackgroundTasks
 import os
 import httpx
 from dotenv import load_dotenv
+import json
 
 # 导入外部模块
 from telegramenglishteacher.Talkfirst import qwen_plus_word
@@ -54,16 +55,31 @@ class TelegramBot:
             finally:
                 files["voice"].close()  # 确保文件被关闭
 
-    async def send_markdown(text):
-        ## tran json into markdown
-        pass
+    def json_to_markdown(self, data):
+        markdown = "## Phrases\n\n"
+        markdown += "| Original Phrase                   | Revised Phrase                        | 查看对比                    |\n"
+        markdown += "|------------------------------------|---------------------------------------|----------------------------|\n"
 
-    async def handle_text_message(
-        self, chat_id, text, background_tasks: BackgroundTasks
-    ):
+        for phrase in data["phrases"]:
+            original = phrase["original"]
+            revised = phrase["revised"]
+            # 创建查看对比的超链接
+            comparison = f"[{original} vs {revised}](https://www.deepseek.com/)"
+            markdown += f"| {original} | {revised} | {comparison} |\n"
+
+        return markdown
+
+    async def send_markdown(self, chat_id, text):
+        ## tran json into markdown
+        reply_json = deepseek_word.generate_analy_content(text)
+        reply_markdwon = self.json_to_markdown(data=json.loads(reply_json))
+        print(reply_markdwon)
+        await self.send_message(chat_id, reply_markdwon)
+
+    async def handle_text_message(self, chat_id, text):
         reply_text = qwen_plus_word.generate_text(text)
-        # background_tasks.add_task(deepseek_word.generate_analy_content, reply_text)
         await self.send_message(chat_id, reply_text)
+        return reply_text
 
     async def handle_photo_message(self, chat_id):
         await self.send_message(chat_id, "收到图片，但我暂时无法处理 🖼️")
