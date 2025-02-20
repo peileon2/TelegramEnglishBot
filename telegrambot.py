@@ -56,16 +56,17 @@ class TelegramBot:
                 files["voice"].close()  # 确保文件被关闭
 
     def json_to_markdown(self, data):
-        markdown = "## Phrases\n\n"
-        markdown += "| Original Phrase                   | Revised Phrase                        | 查看对比                    |\n"
-        markdown += "|------------------------------------|---------------------------------------|----------------------------|\n"
+        # 创建 Markdown 内容
+        markdown = f"**Spoken Version:** {data['spoken_version']}\n\n"
+        markdown += "**Phrases Comparison:**\n"
 
         for phrase in data["phrases"]:
             original = phrase["original"]
             revised = phrase["revised"]
-            # 创建查看对比的超链接
-            comparison = f"[{original} vs {revised}](https://www.deepseek.com/)"
-            markdown += f"| {original} | {revised} | {comparison} |\n"
+            # 无论是否改变，都将对比显示在列表中，并在每个对比后添加超链接
+            markdown += f"- **Original**: {original}\n"
+            markdown += f"  **Revised**: {revised}\n"
+            markdown += f'  ["{original}" vs "{revised}"](https://www.deepseek.com/)\n\n'  # 添加超链接
 
         return markdown
 
