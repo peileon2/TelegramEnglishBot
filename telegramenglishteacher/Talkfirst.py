@@ -13,34 +13,24 @@ class QwenPlusWord:
         self.model = model  # Set the default model name
 
     def generate_text(self, content):
+        # Prepare the messages with system instructions and user input
         messages = [
             {
                 "role": "system",
-                "content": "You are an AI assistant that strictly follows instructions and always returns valid JSON output. Your task is to convert written English into natural spoken English while providing key phrase improvements."
+                "content": """You are an English writing assistant. Your task is to correct the grammar of sentences while keeping the original words as much as possible. 
+
+                1. **Grammar Errors**:
+                - Correct any grammatical errors without changing the original vocabulary or word choices.
+
+                2. **Output**:
+                - Provide only the grammatically corrected sentence as a string, without any additional text, labels, or explanations.
+
+                Example: 
+                - Original: "I have a 朋友,I wanna go for a trip with 他."
+                - Corrected: "I have a friend, I wanna go for a trip with him."
+                """,
             },
-            {
-                "role": "user",
-                "content": (
-                    "Convert the following English sentence into a more natural spoken form and return the result **strictly** in JSON format with the following structure:\n\n"
-                    "{\n"
-                    '  "spoken_version": "Fully revised, natural spoken version of the sentence.",\n'
-                    '  "phrases": [\n'
-                    "    {\n"
-                    '      "original": "Original phrase from the input sentence.",\n'
-                    '      "revised": "Improved, more natural spoken version."\n'
-                    "    },\n"
-                    "    { more entries if applicable }\n"
-                    "  ]\n"
-                    "}\n\n"
-                    "**Rules:**\n"
-                    "- **Always return valid, properly formatted JSON.**\n"
-                    "- Correct spelling and grammar while preserving the original meaning.\n"
-                    "- Exclude filler words like \"so,\" \"uh,\" unless they add meaning.\n"
-                    "- Keep only **meaningful phrases** in the `phrases` list.\n"
-                    "- Ensure the JSON output is correctly structured with no extra text or formatting issues.\n\n"
-                    "Sentence: \"So uh whyd sum of my crops dry out even tho it was literally storming the day prior\""
-                )
-            }
+            {"role": "user", "content": content},
         ]
 
         # Make the API call to the qwen-plus model
