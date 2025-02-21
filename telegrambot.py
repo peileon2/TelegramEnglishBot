@@ -3,6 +3,7 @@ import os
 import httpx
 from dotenv import load_dotenv
 import json
+from telegramenglishteacher.AliTranslate import AliTranslate
 
 # 导入外部模块
 from telegramenglishteacher.Talkfirst import qwen_plus_word
@@ -74,13 +75,16 @@ class TelegramBot:
         ## tran json into markdown
         reply_json = deepseek_word.generate_analy_content(text)
         reply_markdwon = self.json_to_markdown(data=json.loads(reply_json))
-        print(reply_markdwon)
+        # print(reply_markdwon)
         await self.send_message(chat_id, reply_markdwon)
 
     async def handle_text_message(self, chat_id, text):
         reply_text = qwen_plus_word.generate_text(text)
         await self.send_message(chat_id, reply_text)
-        return reply_text
+        trans_text = AliTranslate.translate(reply_text)
+        mix_text = reply_text + "\n" + trans_text
+        # print(mix_text)
+        return mix_text
 
     async def handle_photo_message(self, chat_id):
         await self.send_message(chat_id, "收到图片，但我暂时无法处理 🖼️")
