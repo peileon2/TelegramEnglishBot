@@ -80,9 +80,9 @@ class TelegramBot:
 
     async def handle_text_message(self, chat_id, text):
         reply_text = qwen_plus_word.generate_text(text)
-        await self.send_message(chat_id, reply_text)
         trans_text = AliTranslate.translate(reply_text)
         mix_text = reply_text + "\n" + trans_text
+        await self.send_message(chat_id, mix_text)
         # print(mix_text)
         return mix_text
 
